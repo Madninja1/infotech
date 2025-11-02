@@ -129,22 +129,35 @@ class Book extends ActiveRecord
             ->where(['book_id' => $this->id])->column();
 
         if (!$authorIds) {
+            Yii::info("Book #{$this->id}: авторов нет — рассылка не требуется.");
             return;
         }
 
         $phones = (new Query())
-            ->select('phone')
-            ->distinct()
+            ->select('phone')->distinct()
             ->from('{{%author_subscription}}')
-            ->where(['author_id' => $authorIds])->column();
+            ->where(['author_id' => $authorIds])
+            ->column();
 
         if (!$phones) {
+            Yii::info("Book #{$this->id}: подписчиков нет.");
+
             return;
         }
 
-        $msg = sprintf('Новая книга: "%s" (%d)', $this->title, $this->year);
+        $msg   = sprintf('Новая книга: "%s" (%d)', $this->title, $this->year);
+        $sent = 0; $failed = 0;
+
         foreach ($phones as $phone) {
-            $sms->send($phone, $msg);
+            try {
+                $ok = $sms->send($phone, $msg);
+                $ok ? $sent++ : $failed++;
+            } catch (\Throwable $e) {
+                Yii::error("Book #{$this->id}: исключение при SMS для {$phone}: {$e->getMessage()}");
+                $failed++;
+            }
         }
+
+        Yii::info("Book #{$this->id}: SMS отправлено {$sent}, ошибок {$failed}, подписчиков " . count($phones) . ".");
     }
 }
