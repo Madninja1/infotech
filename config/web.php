@@ -42,14 +42,21 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
+        'storage' => [
+            'class' => \app\components\LocalStorage::class,
+            'basePath' => '@webroot/uploads',
+            'baseUrl'  => '@web/uploads',
+        ],
+        'sms' => [
+            'class' => \app\components\SmsPilotClient::class,
+            'apiKey' => getenv('SMS_API_KEY') ?: 'эмулятор'
+        ],
     ],
     'params' => $params,
 ];
