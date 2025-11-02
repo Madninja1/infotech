@@ -1,6 +1,7 @@
 <?php
 namespace app\components;
 
+use Yii;
 use yii\base\Component;
 use yii\helpers\FileHelper;
 
@@ -14,13 +15,14 @@ class LocalStorage extends Component
 
     public function save(string $subdir, string $fileName, string $content): string
     {
-        $path = \Yii::getAlias($this->basePath) . '/' . trim($subdir, '/');
+        $path = Yii::getAlias($this->basePath) . '/' . trim($subdir, '/');
         FileHelper::createDirectory($path, 0775, true);
 
         $full = $path . '/' . $fileName;
         file_put_contents($full, $content);
 
-        $url = \Yii::getAlias($this->baseUrl) . '/' . trim($subdir, '/') . '/' . $fileName;
+        $url = Yii::getAlias($this->baseUrl) . '/' . trim($subdir, '/') . '/' . $fileName;
+
         return $url;
     }
 }
