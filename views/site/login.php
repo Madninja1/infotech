@@ -50,6 +50,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 To modify the username/password, please check out the code <code>app\models\User::$users</code>.
             </div>
 
+            <div class="mt-3">
+                <p>Don't have an account yet?</p>
+                <?= Html::a('Register here', ['site/signup'], ['class' => 'btn btn-link']) ?>
+            </div>
         </div>
     </div>
 </div>
